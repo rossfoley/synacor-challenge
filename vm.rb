@@ -71,27 +71,43 @@ class VirtualMachine
 		case instruction
 		when 0
 			@running = false
+
 		when 1
-			@registers[args[0] - 32768] = process_arg(args[1])
+			set_register(args[0], process_arg(args[1]))
+
+		when 4
+			if process_arg(args[1]) == process_arg(args[2])
+				set_register(args[0], 1)
+			else
+				set_register(args[0], 0)
+			end
+
 		when 6
-			location = process_arg(args[0])
-			@pc = location
+			@pc = process_arg(args[0])
+
 		when 7
 			if process_arg(args[0]) != 0
 				location = process_arg(args[1])
 				@pc = location
 			end
+
 		when 8
 			if process_arg(args[0]) == 0
 				location = process_arg(args[1])
 				@pc = location
 			end
+
+		when 9
+			sum = (process_arg(args[1]) + process_arg(args[2])) % 32768
+			set_register(args[0], sum)
+
 		when 19
 			print process_arg(args[0]).chr
+
 		when 21
 			
 		else
-			puts "Unknown instruction! OpCode: #{instruction}, Instruction: #{@op_code.name_of_op(instruction)}"
+			puts "Unknown instruction! OpCode: #{instruction}, Instruction: #{@op_code.name_of_op(instruction)}, Args: #{args}"
 			@running = false
 		end
 	end
@@ -104,6 +120,10 @@ class VirtualMachine
 		else
 			puts 'Invalid value!'
 		end
+	end
+
+	def set_register(register, value)
+		@registers[register - 32768] = value
 	end
 
 	def load_program(program)
