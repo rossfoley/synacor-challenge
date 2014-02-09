@@ -1,4 +1,6 @@
 require 'debugger'
+require 'highline/system_extensions'
+include HighLine::SystemExtensions
 
 class OpCodeInterpreter
   def initialize
@@ -159,6 +161,9 @@ class VirtualMachine
 
 		when 19
 			print process_arg(args[0]).chr
+
+		when 20
+			set_register(args[0], get_character)
 
 		when 21
 			
