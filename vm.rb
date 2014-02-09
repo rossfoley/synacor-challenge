@@ -138,6 +138,17 @@ class VirtualMachine
 		when 14
 			set_register(args[0], 32767 - process_arg(args[1]))
 
+		when 15
+			memory = @instructions[process_arg(args[1])]
+			set_register(args[0], memory)
+
+		when 16
+			@instructions[process_arg(args[0])] = process_arg(args[1])
+
+		when 17
+			@stack.push @pc
+			@pc = process_arg(args[0])
+
 		when 19
 			print process_arg(args[0]).chr
 
