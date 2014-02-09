@@ -75,6 +75,17 @@ class VirtualMachine
 		when 1
 			set_register(args[0], process_arg(args[1]))
 
+		when 2
+			@stack.push(process_arg(args[0]))
+
+		when 3
+			popped = @stack.pop
+			unless popped.nil?
+				set_register(args[0], popped)
+			else
+				puts "Error! Stack was empty during pop!"
+			end
+
 		when 4
 			if process_arg(args[1]) == process_arg(args[2])
 				set_register(args[0], 1)
