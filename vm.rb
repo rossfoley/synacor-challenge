@@ -131,6 +131,13 @@ class VirtualMachine
 			sum = (process_arg(args[1]) & process_arg(args[2]))
 			set_register(args[0], sum)
 
+		when 13
+			sum = (process_arg(args[1]) | process_arg(args[2]))
+			set_register(args[0], sum)
+
+		when 14
+			set_register(args[0], 32767 - process_arg(args[1]))
+
 		when 19
 			print process_arg(args[0]).chr
 
