@@ -149,6 +149,14 @@ class VirtualMachine
 			@stack.push @pc
 			@pc = process_arg(args[0])
 
+		when 18
+			value = @stack.pop
+			if value.nil?
+				@running = false
+			else
+				@pc = value
+			end
+
 		when 19
 			print process_arg(args[0]).chr
 
