@@ -93,6 +93,13 @@ class VirtualMachine
 				set_register(args[0], 0)
 			end
 
+		when 5
+			if process_arg(args[1]) > process_arg(args[2])
+				set_register(args[0], 1)
+			else
+				set_register(args[0], 0)
+			end
+
 		when 6
 			@pc = process_arg(args[0])
 
@@ -110,6 +117,18 @@ class VirtualMachine
 
 		when 9
 			sum = (process_arg(args[1]) + process_arg(args[2])) % 32768
+			set_register(args[0], sum)
+
+		when 10
+			sum = (process_arg(args[1]) * process_arg(args[2])) % 32768
+			set_register(args[0], sum)
+
+		when 11
+			sum = (process_arg(args[1]) % process_arg(args[2]))
+			set_register(args[0], sum)
+
+		when 12
+			sum = (process_arg(args[1]) & process_arg(args[2]))
 			set_register(args[0], sum)
 
 		when 19
