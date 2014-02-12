@@ -1,54 +1,17 @@
 require 'debugger'
 require 'highline/system_extensions'
+require_relative 'op_code_interpreter'
 include HighLine::SystemExtensions
-
-class OpCodeInterpreter
-  def initialize
-  	@op_codes = {0 => {args: 0, name: 'Halt'}, 
-  							 1 => {args: 2, name: 'Set'},
-  							 2 => {args: 1, name: 'Push'},
-  							 3 => {args: 1, name: 'Pop'},
-  							 4 => {args: 3, name: 'Equals'},
-  							 5 => {args: 3, name: 'Greater Than'},
-  							 6 => {args: 1, name: 'Jump'},
-  							 7 => {args: 2, name: 'Jump If Not Zero'},
-  							 8 => {args: 2, name: 'Jump If Zero'},
-  							 9 => {args: 3, name: 'Add'},
-  							10 => {args: 3, name: 'Multiply'},
-  							11 => {args: 3, name: 'Modulo'},
-  							12 => {args: 3, name: 'And'},
-  							13 => {args: 3, name: 'Or'},
-  							14 => {args: 2, name: 'Not'},
-  							15 => {args: 2, name: 'Read Memory'},
-  							16 => {args: 2, name: 'Write Memory'},
-  							17 => {args: 1, name: 'Call'},
-  							18 => {args: 0, name: 'Return'},
-  							19 => {args: 1, name: 'Output'},
-  							20 => {args: 1, name: 'Input'},
-              	21 => {args: 0, name: 'No Operation'}}
-  end
-
-  def number_of_args(op)
-    code = @op_codes[op]
-    return 0 if code.nil?
-    code[:args]
-  end
-
-  def name_of_op(op)
-  	code = @op_codes[op]
-    return '' if code.nil?
-    code[:name]
-  end
-end
 
 class VirtualMachine
 	def initialize
 		@stack = []
-  		@registers = [0] * 8
+  	@registers = [0] * 8
 		@instructions = []
 		@running = true
 		@pc = 0
 		@op_code = OpCodeInterpreter.new
+    $stdout.sync = true
 	end
 
 	def halt
@@ -59,7 +22,7 @@ class VirtualMachine
 		@running = true
 		while @running do
 			next_instruction = @instructions[@pc]
-			num_args = @op_code.number_of_args(next_instruction)
+			num_args = @op_code.num_args(next_instruction)
 			args = []
 			if num_args > 0
 				args = @instructions[(@pc+1)..(@pc+num_args)]
@@ -172,7 +135,7 @@ class VirtualMachine
 		when 21
 			
 		else
-			puts "Unknown instruction! OpCode: #{instruction}, Instruction: #{@op_code.name_of_op(instruction)}, Args: #{args}"
+			puts "Unknown instruction! OpCode: #{instruction}, Instruction: #{@op_code.name(instruction)}, Args: #{args}"
 			@running = false
 		end
 	end
@@ -195,18 +158,3 @@ class VirtualMachine
 		@instructions = program
 	end
 end
-
-$stdout.sync = true
-challenge_array = []
-challenge_file = File.new('challenge.bin', 'rb')
-
-while !(challenge_file.eof?)
-	challenge_array.push(challenge_file.read(2).unpack('S<')[0])
-end
-
-challenge_array[5514] = 21
-challenge_array[5515] = 21
-
-vm = VirtualMachine.new
-vm.load_program(challenge_array)
-vm.run
