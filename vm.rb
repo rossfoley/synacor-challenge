@@ -44,7 +44,7 @@ end
 class VirtualMachine
 	def initialize
 		@stack = []
-  	@registers = [0] * 8
+  		@registers = [0] * 8
 		@instructions = []
 		@running = true
 		@pc = 0
@@ -163,7 +163,11 @@ class VirtualMachine
 			print process_arg(args[0]).chr
 
 		when 20
-			set_register(args[0], get_character)
+			char = get_character
+			if char == 37
+				debugger
+			end
+			set_register(args[0], char)
 
 		when 21
 			
@@ -199,6 +203,9 @@ challenge_file = File.new('challenge.bin', 'rb')
 while !(challenge_file.eof?)
 	challenge_array.push(challenge_file.read(2).unpack('S<')[0])
 end
+
+challenge_array[5514] = 21
+challenge_array[5515] = 21
 
 vm = VirtualMachine.new
 vm.load_program(challenge_array)
